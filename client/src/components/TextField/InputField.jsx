@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-const InputField = ({nameTitle,placeHolder}) => {
+const InputField = ({nameTitle,className,placeHolder,type,value,onChange}) => {
   return (
     <div>
     <label className="form-control w-full">
@@ -8,9 +8,11 @@ const InputField = ({nameTitle,placeHolder}) => {
         <span className="label-text font-bold capitalize">{nameTitle}</span>
       </div>
       <input
-        type="text"
+        type={type}
         placeholder={placeHolder}
-        className="input input-bordered w-full"
+        className={`input  input-bordered w-full ${className}`}
+        value={value}
+        onChange={onChange}
       />
    
     </label>

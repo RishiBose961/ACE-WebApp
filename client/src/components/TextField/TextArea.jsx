@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-const TextArea = ({nameTitle,placeHolder}) => {
+const TextArea = ({nameTitle,placeHolder,value,onChange}) => {
   return (
     <label className="form-control">
       <div className="label">
@@ -8,6 +8,8 @@ const TextArea = ({nameTitle,placeHolder}) => {
       <textarea
         className="textarea textarea-bordered h-40"
         placeholder={placeHolder}
+        value={value}
+        onChange={onChange}
       ></textarea>
     </label>
   );

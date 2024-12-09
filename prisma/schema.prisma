@@ -14,12 +14,52 @@ datasource db {
 }
 
 model User {
+  id             String          @id @default(cuid())
+  username       String          @unique
+  name           String
+  salt           String
+  email          String          @unique
+  avatar         String
+  password       String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  userInfoSkills UserInfoSkill[]
+  ProjectPost    ProjectPost[]
+  contributions  contributions[]
+}
+
+model UserInfoSkill {
   id        String   @id @default(cuid())
-  username  String   @unique
-  name      String
-  salt      String
-  email     String   @unique
-  password  String
+  userId    String
+  users     User     @relation(fields: [userId], references: [id])
+  category  String
+  skills    String[] // An array to store skills like ["React", "Next.js"]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ProjectPost {
+  id           String   @id @default(cuid())
+  userId       String
+  users        User     @relation(fields: [userId], references: [id])
+  title        String
+  description  String
+  projectImage String
+  pcategory    String
+  plink        String
+  prepository  String
+  createdAt    DateTime @default(now())
+
+  contributions contributions[]
+}
+
+model contributions {
+  id        String      @id @default(cuid())
+  userId    String
+  users     User        @relation(fields: [userId], references: [id])
+  projectId String
+  projects  ProjectPost @relation(fields: [projectId], references: [id])
+  date      DateTime    @default(now())
+  count     Int
+  createdAt DateTime    @default(now())
 }

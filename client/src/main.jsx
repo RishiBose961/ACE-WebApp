@@ -8,28 +8,42 @@ import {
   Route,
   RouterProvider,
 } from "react-router";
-import Home from './pages/HomePage/Home.jsx'
+import { Provider } from "react-redux";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Home from "./pages/HomePage/Home.jsx";
 import ProjectPage from "./pages/ProjectPage/Project.jsx";
 import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
+import Register from "./pages/AuthPage/Register.jsx";
+import Login from "./pages/AuthPage/Login.jsx";
+import store from "./store.js";
+import PrivateRoute from "./components/PrivateRoute.jsx";
+import MainPage from "./pages/MainPage/MainPage.jsx";
 
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      <Route index={true} path="/" element={<Home />} />
-      <Route path="/new" element={<ProjectPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-      {/* <Route path="/register" element={<RegisterPage />} /> */}
-      {/* <Route path="" element={<PrivateRoute />}>
-        <Route index={true} path="/" element={<HomePage />} />
-        <Route path="/new" element={<PostPage />} />
-      </Route> */}
+      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="" element={<PrivateRoute />}>
+        <Route index={true} path="/" element={<Home />} />
+        <Route path="/new" element={<ProjectPage />} />
+        <Route path="/:username" element={<MainPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Route>
     </Route>
   )
 );
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>
+  <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <StrictMode>
+        <RouterProvider router={router} />
+      </StrictMode>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  </Provider>
 );

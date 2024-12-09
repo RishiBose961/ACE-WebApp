@@ -16,19 +16,28 @@ export const registerUser = async (req: Request, res: Response) => {
     const existingUser = await prisma.user.findUnique({
       where: { username },
     });
+
     if (existingUser) {
       return res.status(400).json({ message: "User already exists." });
     }
+
+    const generateUniqueUsername = (name) => {
+      const randomNumber = Math.floor(1000 + Math.random() * 9000); // Generate a 4-digit random number
+      return `@${name}${randomNumber}`; // Combine name and random number
+    };
 
     const salt = randomBytes(16).toString("hex");
 
     const hashedPassword = await hashPassword(password, salt);
 
+  
+
     // Create the user in the database
     const newUser = await prisma.user.create({
       data: {
-        username,
+        username:generateUniqueUsername(name),
         name,
+        avatar:`https://api.dicebear.com/9.x/dylan/svg?seed=${username}`,
         email,
         salt,
         password: hashedPassword,
@@ -42,6 +51,7 @@ export const registerUser = async (req: Request, res: Response) => {
         id: newUser.id,
         username: newUser.username,
         email: newUser.email,
+        avatar: newUser.avatar,
       },
     });
   } catch (error) {
@@ -63,14 +73,16 @@ export const loginUser = async (req: Request, res: Response) => {
 
   if (hashedPassword === user.password) {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "6m",
+      expiresIn: "5d",
     });
     res.status(201).json({
       token,
 
       _id: user.id,
+      username: user.username,
       name: user.name,
       email: user.email,
+      avatar: user.avatar,
       message: "Login successful",
     });
   } else {
@@ -80,15 +92,25 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const Profile = async (req: Request, res: Response) => {
   try {
-    if (!req.user || !req.user.id) {
+    const { username } = req.params;
+
+    let user:any;
+
+    if (username) {
+      // Search by username if provided
+      user = await prisma.user.findUnique({
+        where: { username: username },
+      });
+    } else if (req.user?.id) {
+      // Fallback to search by user ID if username is not provided
+      user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+      });
+    } else {
       return res
         .status(401)
         .json({ error: "Unauthorized access - User not found in request" });
     }
-
-    const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
-    });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -100,6 +122,8 @@ export const Profile = async (req: Request, res: Response) => {
       name: user.name,
       email: user.email,
       username: user.username,
+      avatar: user.avatar,
+
     });
   } catch (error: any) {
     console.error("Error in Profile controller:", error.message);

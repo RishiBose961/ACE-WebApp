@@ -1,31 +1,63 @@
-import { Computer, Heart, Link, MessageCircle, ProjectorIcon } from "lucide-react";
+/* eslint-disable react/prop-types */
+import {
+  Computer,
+  Heart,
+  Link,
+  MessageCircle,
+  ProjectorIcon,
+} from "lucide-react";
+import { useLocation } from "react-router";
 
-const ProjectImage = () => {
+const ProjectImage = ({
+  item,
+  imagePreview,
+  title,
+  description,
+  pcategory,
+}) => {
   const link = "https://github.com/";
+
+  const location = useLocation();
+  const url = location.pathname.split("/")[1];
+  
+
+
   return (
     <>
-      <ol className="relative border-s-2  border-cyan-500  m-5">
+      <ol className="relative border-s-2  border-cyan-500   m-5">
         <li className="mb-10 ms-6">
-          <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-            <Computer/>
+          <span
+            className="absolute flex items-center justify-center w-6 h-6 
+          bg-blue-100 rounded-full -start-3 ring-8  ring-white dark:ring-gray-900 dark:bg-blue-900"
+          >
+            <Computer className="animate-pulse" />
           </span>
           <h3 className="flex items-center mb-1 text-lg font-semibold text-gray-900 text-pretty dark:text-white">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            <span className="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900
-             dark:text-red-300 ms-3">
+            {item?.title || title || "Add Project Title"}
+
+            {item?.createdAt}
+            <span
+              className="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900
+             dark:text-red-300 ms-3"
+            >
               New
             </span>
           </h3>
           <time className="block mb-4 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-            Released on December 7th, 2021
+            {item?.createdAt || "Time Now Created"}
           </time>
 
           <img
-            src="https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src={
+              item?.projectImage ||
+              imagePreview ||
+              "https://plus.unsplash.com/premium_photo-1732730224306-3b469ea9e640?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyfHx8ZW58MHx8fHx8"
+            }
             alt=""
-            className=" w-full h-48 rounded-xl  object-cover"
+            className=" w-full h-48 rounded-xl"
           />
         </li>
+        
         <li className="mb-10 ms-6">
           <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
             <svg
@@ -39,29 +71,34 @@ const ProjectImage = () => {
             </svg>
           </span>
 
-          <span className="bg-blue-100 text-blue-800 text-sm font-medium me-2 
-          px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 ">
-              Category
-            </span>
-
-          <p className="text-base text-pretty font-normal text-gray-500 dark:text-gray-400 mt-3">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro
-            provident dolorem minus sequi dignissimos dolore voluptates maiores
-            consequatur! Nihil labore numquam enim dolor itaque est possimus
-            aliquid in optio dignissimos.
-          </p>
-       
+          <span
+            className="bg-blue-100 text-blue-800 text-sm font-medium me-2 
+          px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 "
+          >
+            {item?.pcategory || pcategory || "category"}
+          </span>
+          {url === "new" ? (
+            ""
+          ) : (
             <div className="flex justify-between mt-4">
-              <Heart className=" cursor-pointer"/>
-              <MessageCircle className=" cursor-pointer"/>
-              {link.includes("github.com") ? <ProjectorIcon className=" cursor-pointer"/> : null}
-              {link.includes("github.com") ? <Link className=" cursor-pointer"/> : null}
+              <Heart className=" cursor-pointer" />
+              <MessageCircle className=" cursor-pointer" />
+              {link.includes("github.com") ? (
+                <ProjectorIcon className=" cursor-pointer" />
+              ) : null}
+              {link.includes("github.com") ? (
+                <Link className=" cursor-pointer" />
+              ) : null}
             </div>
-      
+          )}
+          <p className="text-base text-pretty font-normal text-gray-500 dark:text-gray-400 mt-3">
+            {item?.description || description || "Add a description"}
+          </p>
+
+         
         </li>
       </ol>
     </>
-    
   );
 };
 
